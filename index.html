@@ -49,10 +49,10 @@ hr {
 
 <body>
 <div id="menubar">
-<input type="checkbox" id="bold" onclick="this.checked && fmt_selection(diff_Bf); input.focus();"><label for="bold">𝗕</label>
-<input type="checkbox" id="italic" onclick="this.checked && fmt_selection(diff_It); input.focus();"><label for="italic">𝐼</label>
-<input type="checkbox" id="cursive" onclick="this.checked && fmt_selection(diff_Cu); input.focus();"><label for="cursive">𝒞</label>
-<input type="checkbox" id="greek" onclick="this.checked && fmt_selection(diff_gr); input.focus();"><label for="greek">α</label>
+<input type="checkbox" id="bold" onclick="this.checked && fmt_selection(map_Bf); input.focus();"><label for="bold">𝗕</label>
+<input type="checkbox" id="italic" onclick="this.checked && fmt_selection(map_It); input.focus();"><label for="italic">𝐼</label>
+<input type="checkbox" id="cursive" onclick="this.checked && fmt_selection(map_Cu); input.focus();"><label for="cursive">𝒞</label>
+<input type="checkbox" id="greek" onclick="this.checked && fmt_selection(map_gr); input.focus();"><label for="greek">α</label>
 <input type="checkbox" id="math" onclick="input.focus();"><label for="math">∮</label>
 <hr>
 <span>basic font </span> <select name="basicfont" id="basicfont" onchange='input.style.setProperty("font-family", this.value); keyboard.style.setProperty("font-family", this.value)'>
@@ -79,14 +79,18 @@ reasons to not use Unicode: https://axbom.com/dont-fake-bold-and-italic-text-wit
 http://xahlee.info/comp/unicode_math_operators.html
 <script>
 
-diff_Bf = "𝗔".codePointAt(0) - "A".codePointAt(0);
-diff_bf = "𝗮".codePointAt(0) - "a".codePointAt(0);
-diff_it = "𝑎".codePointAt(0) - "a".codePointAt(0);
-diff_It = "𝐴".codePointAt(0) - "A".codePointAt(0);
-diff_BfIt = "𝑨".codePointAt(0) - "A".codePointAt(0);
-diff_gr = "Α".codePointAt(0) - "A".codePointAt(0);
-diff_grIt = "𝛢".codePointAt(0) - "A".codePointAt(0);
-diff_Cu = "𝒜".codePointAt(0) - "A".codePointAt(0);
+Apos = "A".codePointAt(0)
+Zpos = "Z".codePointAt(0)
+apos = "a".codePointAt(0)
+zpos = "z".codePointAt(0)
+map_Bf = "𝗔".codePointAt(0)
+map_bf = "𝗮".codePointAt(0)
+map_it = "𝑎".codePointAt(0)
+map_It = "𝐴".codePointAt(0)
+map_BfIt = "𝑨".codePointAt(0)
+map_gr = "Α".codePointAt(0)
+map_grIt = "𝛢".codePointAt(0)
+map_Cu = "𝒜".codePointAt(0)
 
 "𝛼".codePointAt(0) - "a".codePointAt(0); 
 String.fromCodePoint("??".codePointAt(0)+230) // "??" 
@@ -94,32 +98,29 @@ String.fromCodePoint("??".codePointAt(0)+230) // "??"
 function fmt_unicode(text) {
     d = 6
     if (text==null) return false
-    else if (greek.checked & italic.checked) {diff = diff_grIt}
-    else if (greek.checked) {diff = diff_gr; d=0}
-    else if (bold.checked & italic.checked) diff = diff_BfIt
-    else if (bold.checked) diff = diff_Bf
-    else if (italic.checked) diff = diff_It
-    else if (cursive.checked) diff = diff_Cu
+    else if (greek.checked & italic.checked) {map_char = map_grIt}
+    else if (greek.checked) {map_char = map_gr; d=0}
+    else if (bold.checked & italic.checked) map_char = map_BfIt
+    else if (bold.checked) map_char = map_Bf
+    else if (italic.checked) map_char = map_It
+    else if (cursive.checked) map_char = map_Cu
     else return false
-    taInsert(fmt(text, diff, d))
+    taInsert(fmt(text, map_char, d))
     return true
 }
 
-function fmt_selection(diff) {
+function fmt_selection(font_pos) {
    sel = input.value.substring(input.selectionStart, input.selectionEnd)
-   if (sel) taInsert([...sel].map(ch => fmt(ch, diff)).join(""))
+   if (sel) taInsert([...sel].map(ch => fmt(ch, font_pos)).join(""))
 }
 
 
-// Aa_num = ch => (n=ch.charCodeAt(0), (n >= 65 && n < 91) ?  n-65 : (n >= 97 && n < 123) ? n-65-6 : null)
-isUpper = (n) => n >= 65 && n < 91;
-isLower = (n) => n >= 97 && n < 123;
+Aa_num = ch => (n=ch.charCodeAt(0), (n >= Apos && n <= Zpos) ?  n-65 : (n >= apos && n <= zpos) ? n-Apos-(apos-Zpos)+1 : null)
 
-fmt = (char, diff, d=6) => {
-  n = char.charCodeAt(0);
-  if (isUpper(n)) return String.fromCodePoint(n + diff);
-  if (isLower(n)) return String.fromCodePoint(n + diff - d);
-  return char;
+fmt = (ch, font_pos, d=6) => {
+  n = Aa_num(ch)
+  if (n === null) return ch
+  return String.fromCodePoint(font_pos + n)
 };
 
 
