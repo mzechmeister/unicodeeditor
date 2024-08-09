@@ -55,7 +55,7 @@ hr {
 <input type="checkbox" id="cursive" onclick="this.checked && (italic.checked = false, fmt_selection(map.cu)); input.focus();"><label for="cursive">𝒞</label>
 <input type="checkbox" id="mono" onclick="this.checked && (cursive.checked = false, fmt_selection(map.it)); input.focus();"><label for="mono" style="font-family: Times">𝚃</label>
 <input type="checkbox" id="greek" onclick="this.checked && fmt_selection(map.gr); input.focus();"><label for="greek">α</label>
-<input type="checkbox" id="math" onclick="input.focus();"><label for="math">∮</label>
+<input type="checkbox" id="auto_math" onclick="input.focus();"><label for="auto_math">∮</label>
 <hr>
 <span>basic font </span> <select name="basicfont" id="basicfont" onchange='input.style.setProperty("font-family", this.value); keyboard.style.setProperty("font-family", this.value)'>
   <option value="none" selected></option>
@@ -115,13 +115,34 @@ map.mono   = "𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿�
 for (k of Object.keys(map))
     map[k] = [...map[k]]
 
-
 keymap =
 "ABCDEFGHIKLMNOPQRSTUWXYZ"
 "ΑΒΧΔΕΦΓΗΙΚΛΜΝΟΠΘΡΣΤΨΩΞΥΖ"
 
+math_keynames = {'Alpha': 'Α','Beta': 'Β','Gamma': 'Γ','Delta': 'Δ','Epsilon': 'Ε','Zeta': 'Ζ','Eta': 'Η','Theta': 'Θ','Iota': 'Ι','Kappa': 'Κ','Lambda': 'Λ','upMu': 'Μ','upNu': 'Ν','Xi': 'Ξ','upOmicron': 'Ο','Pi': 'Π','Rho': 'Ρ','Sigma': 'Σ','Tau': 'Τ','Upsilon': 'Υ','Phi': 'Φ','Chi': 'Χ','Psi': 'Ψ','Omega': 'Ω','alpha': 'α','beta': 'β','gamma': 'γ','delta': 'δ','upepsilon': 'ε','zeta': 'ζ','eta': 'η','theta': 'θ','iota': 'ι','kappa': 'κ','lambda': 'λ','mu': 'μ','nu': 'ν','xi': 'ξ','upomicron': 'ο','pi': 'π','rho': 'ρ','varsigma': 'ς','sigma': 'σ','tau': 'τ','upsilon': 'υ','varphi': 'φ','chi': 'χ','psi': 'ψ','omega': 'ω','upvarbeta': 'ϐ','vartheta': 'ϑ','phi': 'ϕ','varpi': 'ϖ', "int": "∫", "sum": "Σ", "*": "⋅",}
+
+// sub- and superscripts
+sup_keys = "0123456789+-=()abcdefghijklmnoprstuvwxyzABDEGHIJKLMNOPRTUVW"
+sup_vals = "⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖʳˢᵗᵘᵛʷˣʸᶻᴬᴮᴰᴱᴳᴴᴵᴶᴷᴸᴹᴺᴼᴾᴿᵀᵁⱽᵂ"
+sub_keys = "0123456789+-=()aehijklmnoprstuvx"
+sub_vals = "₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎ₐₑₕᵢⱼₖₗₘₙₒₚᵣₛₜᵤᵥₓ";
+[...sup_keys].forEach((key, i) => math_keynames["^"+key] = sup_vals[i]);
+[...sup_keys].forEach((key, i) => math_keynames["_"+key] = sub_vals[i]);
+
 function fmt_unicode(text) {
+
     if (text==null) return false
+    if (auto_math.checked) {
+        query = input.value.slice(0,input.selectionEnd) + text
+        for ([math_key, val] of Object.entries(math_keynames)) {
+            if (query.endsWith(math_key)) {
+                input.setSelectionRange(input.selectionEnd-math_key.length+1, input.selectionEnd)
+                taInsert(val)
+                return true
+            }
+        }
+        return false
+    }
     key = ''
     if (!serif.checked) {key += 'ss'}
     if (greek.checked) {key += 'gr'}
@@ -147,11 +168,11 @@ fmt = (ch, font_map) => {
     return ch
 }
 
-
 function taInsert(text, start, end=null) {
     input.focus()
     document.execCommand('insertText', false, text)
 }
+
 function putchar(ch){
   taInsert(ch)
 }
