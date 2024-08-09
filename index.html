@@ -50,8 +50,8 @@ hr {
 <body>
 <div id="menubar">
 <input type="checkbox" id="bold" onclick="this.checked && fmt_selection(map.bf); input.focus();"><label for="bold">𝗕</label>
-<input type="checkbox" id="italic" onclick="this.checked && fmt_selection(map.it); input.focus();"><label for="italic">𝐼</label>
-<input type="checkbox" id="cursive" onclick="this.checked && fmt_selection(map.cu); input.focus();"><label for="cursive">𝒞</label>
+<input type="checkbox" id="italic" onclick="this.checked && (cursive.checked = false, fmt_selection(map.it)); input.focus();"><label for="italic">𝐼</label>
+<input type="checkbox" id="cursive" onclick="this.checked && (italic.checked = false, fmt_selection(map.cu)); input.focus();"><label for="cursive">𝒞</label>
 <input type="checkbox" id="greek" onclick="this.checked && fmt_selection(map.gr); input.focus();"><label for="greek">α</label>
 <input type="checkbox" id="math" onclick="input.focus();"><label for="math">∮</label>
 <hr>
@@ -115,16 +115,14 @@ keymap =
 "ΑΒΧΔΕΦΓΗΙΚΛΜΝΟΠΘΡΣΤΨΩΞΥΖ"
 
 function fmt_unicode(text) {
-    d = 6
     if (text==null) return false
-    else if (greek.checked & italic.checked) {map.char = map.grit}
-    else if (greek.checked) {map_char = map.gr; d=0}
-    else if (bold.checked & italic.checked) map_char = map.bfit
-    else if (bold.checked) map_char = map.bf
-    else if (italic.checked) map_char = map.it
-    else if (cursive.checked) map_char = map.cu
-    else return false
-    taInsert(fmt(text, map_char, d))
+    key = ''
+    if (greek.checked) {key += 'gr'}
+    if (bold.checked) key += 'bf'
+    if (italic.checked)  key += 'it'
+    else if (cursive.checked) key = 'cu' + key
+    if (!key) return false
+    taInsert(fmt(text, map[key]))
     return true
 }
 
