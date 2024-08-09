@@ -144,7 +144,7 @@ for ([math_key, val] of Object.entries(math_keynames)) {
 
 math_ops = "sin,cos,tan,cot,arctan,arccot,"
 math_ops += math_ops.replaceAll(",", "h,")  // hyperbolic
-math_ops += "ln,exp,log";
+math_ops += "ln,exp,log"
 math_ops.split(",").map(s => math_keynames[fmts(s, map.it)] = s)
 
 // sub- and superscripts
@@ -173,7 +173,7 @@ function fmt_unicode(text) {
     }
     key = ''
     if (!serif.checked) {key += 'ss'}
-    if (greek.checked) {key += 'gr'}
+    if (greek.checked) {key = 'gr'}
     if (bold.checked) key += 'bf'
     if (italic.checked)  key += 'it'
     else if (cursive.checked) key = 'cu' + key
