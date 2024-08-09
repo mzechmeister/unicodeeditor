@@ -49,9 +49,9 @@ hr {
 
 <body>
 <div id="menubar">
-<input type="checkbox" id="bold" onclick="this.checked && fmt_selection(map_Bf); input.focus();"><label for="bold">𝗕</label>
-<input type="checkbox" id="italic" onclick="this.checked && fmt_selection(map_It); input.focus();"><label for="italic">𝐼</label>
-<input type="checkbox" id="cursive" onclick="this.checked && fmt_selection(map_Cu); input.focus();"><label for="cursive">𝒞</label>
+<input type="checkbox" id="bold" onclick="this.checked && fmt_selection(map_bf); input.focus();"><label for="bold">𝗕</label>
+<input type="checkbox" id="italic" onclick="this.checked && fmt_selection(map_it); input.focus();"><label for="italic">𝐼</label>
+<input type="checkbox" id="cursive" onclick="this.checked && fmt_selection(map_cu); input.focus();"><label for="cursive">𝒞</label>
 <input type="checkbox" id="greek" onclick="this.checked && fmt_selection(map_gr); input.focus();"><label for="greek">α</label>
 <input type="checkbox" id="math" onclick="input.focus();"><label for="math">∮</label>
 <hr>
@@ -79,31 +79,37 @@ reasons to not use Unicode: https://axbom.com/dont-fake-bold-and-italic-text-wit
 http://xahlee.info/comp/unicode_math_operators.html
 <script>
 
-Apos = "A".codePointAt(0)
-Zpos = "Z".codePointAt(0)
-apos = "a".codePointAt(0)
-zpos = "z".codePointAt(0)
-map_Bf = "𝗔".codePointAt(0)
-map_bf = "𝗮".codePointAt(0)
-map_it = "𝑎".codePointAt(0)
-map_It = "𝐴".codePointAt(0)
-map_BfIt = "𝑨".codePointAt(0)
-map_gr = "Α".codePointAt(0)
-map_grIt = "𝛢".codePointAt(0)
-map_Cu = "𝒜".codePointAt(0)
+function get_chars(A_char, z_char) {
+    Apos = A_char.codePointAt(0)
+    zpos = z_char.codePointAt(0)
+    acc = []
+    for (var i=Apos; i<=zpos; ++i) acc.push( String.fromCodePoint(i))
+    return acc
+}
 
-"𝛼".codePointAt(0) - "a".codePointAt(0); 
-String.fromCodePoint("??".codePointAt(0)+230) // "??" 
+map_Az = get_chars('A', 'z')
+map_Az.splice(26,6) //.replace(/\[\\]\^_`/g,'')
+
+map_bf = get_chars("𝗔", "𝘇")
+map_it = get_chars("𝐴", "𝑧")
+map_bfit = get_chars("𝑨", "𝒛")
+map_gr = get_chars("Α", "ω")
+map_grit = get_chars("𝛢", "𝜛")
+map_cu = get_chars("𝒜", "𝓏"); map_cu[12] = String.fromCodePoint(8499)
+
+
+"𝛼".codePointAt(0) - "a".codePointAt(0)
+String.fromCodePoint("𝗔".codePointAt(0)+230) // "𝚺" 120506
 
 function fmt_unicode(text) {
     d = 6
     if (text==null) return false
-    else if (greek.checked & italic.checked) {map_char = map_grIt}
+    else if (greek.checked & italic.checked) {map_char = map_grit}
     else if (greek.checked) {map_char = map_gr; d=0}
-    else if (bold.checked & italic.checked) map_char = map_BfIt
-    else if (bold.checked) map_char = map_Bf
-    else if (italic.checked) map_char = map_It
-    else if (cursive.checked) map_char = map_Cu
+    else if (bold.checked & italic.checked) map_char = map_bfit
+    else if (bold.checked) map_char = map_bf
+    else if (italic.checked) map_char = map_it
+    else if (cursive.checked) map_char = map_cu
     else return false
     taInsert(fmt(text, map_char, d))
     return true
@@ -114,19 +120,17 @@ function fmt_selection(font_pos) {
    if (sel) taInsert([...sel].map(ch => fmt(ch, font_pos)).join(""))
 }
 
+Aa_num = ch => (n=ch.charCodeAt(0), (n >= Apos && n <= Zpos) ?  n-65 : (n >= apos && n <= zpos) ? n-Apos-(apos-Zpos)+1 : other[1][other[0].indexOf(ch)])
 
-Aa_num = ch => (n=ch.charCodeAt(0), (n >= Apos && n <= Zpos) ?  n-65 : (n >= apos && n <= zpos) ? n-Apos-(apos-Zpos)+1 : null)
-
-fmt = (ch, font_pos, d=6) => {
-  n = Aa_num(ch)
-  if (n === null) return ch
-  return String.fromCodePoint(font_pos + n)
-};
+fmt = (ch, font_map) => {
+    n = map_Az.indexOf(ch)
+    if (n>-1) ch = font_map[n]
+    return ch
+}
 
 
 function taInsert(text, start, end=null) {
-    input.focus();
-    //ta.setSelectionRange(start, end)
+    input.focus()
     document.execCommand('insertText', false, text)
 }
 function putchar(ch){
