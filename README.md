@@ -1,4 +1,4 @@
-# unicodeeditor
+# unicodeeditor (u𝗇𝘪𝗰𝙤𝑑𝐞𝒆𝒹𝓲τ𝛐𝜌)
 
 Write bold, italic, math etc. with unicode.
 
