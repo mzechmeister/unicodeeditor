@@ -55,7 +55,7 @@ hr {
 <input type="checkbox" id="cursive" onclick="this.checked && (italic.checked = false, fmt_selection(map.cu)); input.focus();"><label for="cursive">𝒞</label>
 <input type="checkbox" id="mono" onclick="this.checked && (cursive.checked = false, fmt_selection(map.it)); input.focus();"><label for="mono" style="font-family: Times">𝚃</label>
 <input type="checkbox" id="greek" onclick="this.checked && fmt_selection(map.gr); input.focus();"><label for="greek">α</label>
-<input type="checkbox" id="auto_math" onclick="this.checked && (serif.checked = cursive.checked = true, cursive.checked = false); input.focus();"><label for="auto_math">∮</label>
+<input type="checkbox" id="auto_math" onclick="this.checked && (serif.checked = italic.checked = true, cursive.checked = false); input.focus();"><label for="auto_math">∮</label>
 <hr>
 <span>basic font </span> <select name="basicfont" id="basicfont" onchange='input.style.setProperty("font-family", this.value); keyboard.style.setProperty("font-family", this.value)'>
   <option value="none" selected></option>
@@ -132,14 +132,14 @@ fmt = (ch, map_to, map_from=map_Az) => {
     return ch
 }
 
-fmts = (s, font_map)  => {
-    return [...s].map(ch => fmt(ch, font_map)).join("")
+fmts = (s, ...args)  => {
+    return [...s].map(ch => fmt(ch, ...args)).join("")
 }
 
 math_keynames = {'Alpha': 'Α','Beta': 'Β','Gamma': 'Γ','Delta': 'Δ','Epsilon': 'Ε','Zeta': 'Ζ','Eta': 'Η','Theta': 'Θ','Iota': 'Ι','Kappa': 'Κ','Lambda': 'Λ','upMu': 'Μ','upNu': 'Ν','Xi': 'Ξ','upOmicron': 'Ο','Pi': 'Π','Rho': 'Ρ','Sigma': 'Σ','Tau': 'Τ','Upsilon': 'Υ','Phi': 'Φ','Chi': 'Χ','Psi': 'Ψ','Omega': 'Ω','alpha': 'α','beta': 'β','gamma': 'γ','delta': 'δ','upepsilon': 'ε','zeta': 'ζ','eta': 'η','theta': 'θ','iota': 'ι','kappa': 'κ','lambda': 'λ','mu': 'μ','nu': 'ν','xi': 'ξ','upomicron': 'ο','pi': 'π','rho': 'ρ','varsigma': 'ς','sigma': 'σ','tau': 'τ','upsilon': 'υ','varphi': 'φ','chi': 'χ','psi': 'ψ','omega': 'ω','upvarbeta': 'ϐ','vartheta': 'ϑ','phi': 'ϕ','varpi': 'ϖ', "int": "∫", "sum": "Σ", "*": "⋅",}
 
 for ([math_key, val] of Object.entries(math_keynames)) {
-    math_keynames[fmts(math_key, map.it)] = val
+    math_keynames[fmts(math_key, map.it)] = fmts(val, map.grit, map.gr)
 }
 
 math_ops = "sin,cos,tan,cot,arctan,arccot,"
