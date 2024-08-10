@@ -135,9 +135,12 @@ math_keynames = {'Alpha': 'Α','Beta': 'Β','Gamma': 'Γ','Delta': 'Δ','Epsilon
 for ([math_key, val] of Object.entries(math_keynames))
     math_keynames[fmts(math_key, map.it)] = fmts(val, map.grit, map.gr)
 
-math_ops = "sin,cos,tan,cot,arctan,arccot,"
-math_ops += math_ops.replaceAll(",", "h,")  // hyperbolic
-math_ops += "ln,exp,log"
+math_ops = ",sin,cos,tan,cot"
+math_ops = math_ops.replaceAll(",", ",arc").slice(1) + math_ops
+math_ops.split(",").map(s => {math_keynames[fmts(s, map.it)] = s,
+                              math_keynames[s + fmt('h', map.it)] = s+'h'}) // add hyperbolic
+
+math_ops = "ln,exp,log"
 math_ops.split(",").map(s => math_keynames[fmts(s, map.it)] = s)
 
 // sub- and superscripts
