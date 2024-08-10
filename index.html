@@ -48,13 +48,13 @@ hr {
 
 <body>
 <div id="menubar">
-<input type="checkbox" id="bold" onclick="this.checked && fmt_selection(map.bf); input.focus();"><label for="bold">𝗕</label>
-<input type="checkbox" id="italic" onclick="this.checked && (cursive.checked = false, fmt_selection(map.it)); input.focus();"><label for="italic" style="font-family: Arial;">𝘐</label>
-<input type="checkbox" id="serif" onclick="input.focus();"><label for="serif" style="font-family: Times">S</label>
-<input type="checkbox" id="cursive" onclick="this.checked && (italic.checked = false, fmt_selection(map.cu)); input.focus();"><label for="cursive">𝒞</label>
-<input type="checkbox" id="mono" onclick="this.checked && (cursive.checked = false, fmt_selection(map.it)); input.focus();"><label for="mono" style="font-family: Times">𝚃</label>
-<input type="checkbox" id="greek" onclick="this.checked && fmt_selection(map.gr); input.focus();"><label for="greek">α</label>
-<input type="checkbox" id="auto_math" onclick="this.checked && (serif.checked = italic.checked = true, cursive.checked = false); input.focus();"><label for="auto_math">∮</label>
+<input type="checkbox" id="bold" onclick="this.checked && fmt_selection(map.bf); input.focus();"><label for="bold" title="bold (mathbf)">𝗕</label>
+<input type="checkbox" id="italic" onclick="this.checked && (cursive.checked = false, fmt_selection(map.it)); input.focus();"><label for="italic" title="italic (mathit)" style="font-family: Arial;">𝘐</label>
+<input type="checkbox" id="serif" onclick="input.focus();"><label for="serif" title="serif" style="font-family: Times">S</label>
+<input type="checkbox" id="cursive" onclick="this.checked && (italic.checked = false, fmt_selection(map.cu)); input.focus();"><label for="cursive" title="cursive (mathcal)">𝒞</label>
+<input type="checkbox" id="mono" onclick="this.checked && (cursive.checked = false, fmt_selection(map.it)); input.focus();"><label for="mono" title="monospace (mathtt)" style="font-family: Times">𝚃</label>
+<input type="checkbox" id="greek" onclick="this.checked && fmt_selection(map.gr); input.focus();"><label for="greek" title="greek">α</label>
+<input type="checkbox" id="auto_math" onclick="this.checked && (serif.checked = italic.checked = true, cursive.checked = false); input.focus();"><label for="auto_math" title="greedy auto rendered math mode">∮</label>
 <hr>
 <span>basic font </span> <select name="basicfont" id="basicfont" onchange='input.style.setProperty("font-family", this.value); keyboard.style.setProperty("font-family", this.value)'>
   <option value="none" selected></option>
