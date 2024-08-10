@@ -37,6 +37,7 @@ label {
 
 #menubar {
   display: flex;
+  gap: 3px;
 }
 
 hr {
@@ -64,13 +65,13 @@ hr {
   <option value="Monospace">Monospace</option>
 </select>
 </div>
-<div style="display: flex">
-<input type="number" id="codePoint" onchange="abc.value = [...Array(100)].map((x,i) => String.fromCodePoint(+i+(+this.value))).join('')" step="52">
-<input id="abc" onchange="codePoint.value = this.value.codePointAt(0)" style="flex: 1;">
-</div>
 <textarea id="input" onbeforeinput="fmt_unicode(event.data) && event.preventDefault();"></textarea>
 <br>
 <!-- <textarea id="output">ͰͱͲͳʹͶͷͺͻͼͽͿΆΈΉΊΌΎΏΐΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΪΫάέήίΰαβγδεζηθικλμνξοπρςστυφχψωϊϋόύώϏϐϑϒϓϔϕϖϗϘϙϚϛϜϝϞϟϠϡϰϱϲϳϴϵϷϸϹϺϻϼϽϾϿ</textarea> -->
+<div style="display: flex; gap: 3px;">
+<input type="number" id="codePoint" placeholder="code point" onchange="abc.value = [...Array(100)].map((x,i) => String.fromCodePoint(+i+(+this.value))).join('')" step="52">
+<input id="abc" onchange="codePoint.value = this.value.codePointAt(0)" style="flex: 1;">
+</div>
 <div id="keyboard"></div>
 <br>
 see also
