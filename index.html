@@ -8,9 +8,8 @@
 <style>
 textarea {
   font-size: x-large;
-/*   font-family: Times New Roman; */
-  height: 20em;
-  width: 80ch;
+  height: 10em;
+  width: calc(100% - 8px);
 }
 
 [type=checkbox] {
@@ -118,29 +117,22 @@ map.grbfit = "𝞐𝞑𝞝𝞓𝞔𝞥𝞒𝞖𝞘𝞗𝞙𝞚𝞛𝞜𝞞𝞟�
 map.mono   = "𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣" // 120432
 
 for (k of Object.keys(map))
-    map[k] = [...map[k]]
+    map[k] = [...map[k]]   // strings to lists
 
-keymap =
-"ABCDEFGHIKLMNOPQRSTUWXYZ"
-"ΑΒΧΔΕΦΓΗΙΚΛΜΝΟΠΘΡΣΤΨΩΞΥΖ"
-
-Aa_num = ch => (n=ch.charCodeAt(0), (n >= Apos && n <= Zpos) ?  n-65 : (n >= apos && n <= zpos) ? n-Apos-(apos-Zpos)+1 : other[1][other[0].indexOf(ch)])
-
-fmt = (ch, map_to, map_from=map_Az) => {
+function fmt(ch, map_to, map_from=map_Az) {
     n = map_from.indexOf(ch)
     if (n > -1) ch = map_to[n]
     return ch
 }
 
-fmts = (s, ...args)  => {
+function fmts(s, ...args) {
     return [...s].map(ch => fmt(ch, ...args)).join("")
 }
 
 math_keynames = {'Alpha': 'Α','Beta': 'Β','Gamma': 'Γ','Delta': 'Δ','Epsilon': 'Ε','Zeta': 'Ζ','Eta': 'Η','Theta': 'Θ','Iota': 'Ι','Kappa': 'Κ','Lambda': 'Λ','upMu': 'Μ','upNu': 'Ν','Xi': 'Ξ','upOmicron': 'Ο','Pi': 'Π','Rho': 'Ρ','Sigma': 'Σ','Tau': 'Τ','Upsilon': 'Υ','Phi': 'Φ','Chi': 'Χ','Psi': 'Ψ','Omega': 'Ω','alpha': 'α','beta': 'β','gamma': 'γ','delta': 'δ','upepsilon': 'ε','zeta': 'ζ','eta': 'η','theta': 'θ','iota': 'ι','kappa': 'κ','lambda': 'λ','mu': 'μ','nu': 'ν','xi': 'ξ','upomicron': 'ο','pi': 'π','rho': 'ρ','varsigma': 'ς','sigma': 'σ','tau': 'τ','upsilon': 'υ','varphi': 'φ','chi': 'χ','psi': 'ψ','omega': 'ω','upvarbeta': 'ϐ','vartheta': 'ϑ','phi': 'ϕ','varpi': 'ϖ', "int": "∫", "sum": "Σ", "*": "⋅",}
 
-for ([math_key, val] of Object.entries(math_keynames)) {
+for ([math_key, val] of Object.entries(math_keynames))
     math_keynames[fmts(math_key, map.it)] = fmts(val, map.grit, map.gr)
-}
 
 math_ops = "sin,cos,tan,cot,arctan,arccot,"
 math_ops += math_ops.replaceAll(",", "h,")  // hyperbolic
@@ -157,9 +149,9 @@ sub_vals = "₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎ₐₑₕᵢⱼₖₗ�
 
 function fmt_unicode(text) {
 
-    if (text==null) return false
+    if (text == null) return false
     if (auto_math.checked) {
-        ch = fmts(text, map['it'])
+        ch = fmts(text, map.it)
         query = input.value.slice(0,input.selectionEnd) + ch
         for ([math_key, val] of Object.entries(math_keynames)) {
             if (query.endsWith(math_key)) {
@@ -168,7 +160,7 @@ function fmt_unicode(text) {
                 return true
             }
         }
-        taInsert(fmt(text, map['it']))
+        taInsert(ch)
         return true
     }
     key = ''
@@ -188,25 +180,20 @@ function fmt_selection(font_pos) {
    if (sel) taInsert([...sel].map(ch => fmt(ch, font_pos)).join(""))
 }
 
-
 function taInsert(text, start, end=null) {
     input.focus()
     document.execCommand('insertText', false, text)
-}
-
-function putchar(ch){
-  taInsert(ch)
 }
 
 greek_ch = "αβγδεζηθικλμνξοπρςστυφχψω"
 Greek_ch = "ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ";
 math_ch = "⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ⁿⁱ₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎ₐₑₕᵢⱼₖₗₘₙₒₚᵣₛₜᵤᵥₓₔ√∛∜×÷±∓≈≠ℯ∞≈≅∂′″‴∆∫∬∮⊕×✕"; // http://xahlee.info/comp/unicode_math_operators.html
 // math_ch += "+<=>|~¬±×÷϶؆؇؈⁄⁒⁺⁻⁼₊₋₌℘⅀⅁⅂⅃⅄⅋←↑→↓↔↚↛↠↣↦↮⇎⇏⇒⇔⇴⇵⇶⇷⇸⇹⇺⇻⇼⇽⇾⇿∀∁∂∃∄∅∆∇∈∉∊∋∌∍∎∏∐∑−∓∔∕∖∗∘∙√∛∜∝∞∟∠∡∢∣∤∥∦∧∨∩∪∫∬∭∮∯∰∱∲∳∴∵∶∷∸∹∺∻∼∽∾∿≀≁≂≃≄≅≆≇≈≉≊≋≌≍≎≏≐≑≒≓≔≕≖≗≘≙≚≛≜≝≞≟≠≡≢≣≤≥≦≧≨≩≪≫≬≭≮≯≰≱≲≳≴≵≶≷≸≹≺≻≼≽≾≿⊀⊁⊂⊃⊄⊅⊆⊇⊈⊉⊊⊋⊌⊍⊎⊏⊐⊑⊒⊓⊔⊕⊖⊗⊘⊙⊚⊛⊜⊝⊞⊟⊠⊡⊢⊣⊤⊥⊦⊧⊨⊩⊪⊫⊬⊭⊮⊯⊰⊱⊲⊳⊴⊵⊶⊷⊸⊹⊺⊻⊼⊽⊾⊿⋀⋁⋂⋃⋄⋅⋆⋇⋈⋉⋊⋋⋌⋍⋎⋏⋐⋑⋒⋓⋔⋕⋖⋗⋘⋙⋚⋛⋜⋝⋞⋟⋠⋡⋢⋣⋤⋥⋦⋧⋨⋩⋪⋫⋬⋭⋮⋯⋰⋱⋲⋳⋴⋵⋶⋷⋸⋹⋺⋻⋼⋽⋾⋿⌈⌉⌊⌋⌠⌡⍼⎛⎜⎝⎞⎟⎠⎡⎢⎣⎤⎥⎦⎧⎨⎩⎪⎫⎬⎭⎮⎯⎰⎱⎲⎳⏜⏝⏞⏟⏠⏡▷◁◸◹◺◻◼◽◾◿♯⟀⟁⟂⟃⟄⟇⟈⟉⟊⟌⟎⟏⟐⟑⟒⟓⟔⟕⟖⟗⟘⟙⟚⟛⟜⟝⟞⟟⟠⟡⟢⟣⟤⟥⟰⟱⟲⟳⟴⟵⟶⟷⟸⟹⟺⟻⟼⟽⟾⟿⤀⤁⤂⤃⤄⤅⤆⤇⤈⤉⤊⤋⤌⤍⤎⤏⤐⤑⤒⤓⤔⤕⤖⤗⤘⤙⤚⤛⤜⤝⤞⤟⤠⤡⤢⤣⤤⤥⤦⤧⤨⤩⤪⤫⤬⤭⤮⤯⤰⤱⤲⤳⤴⤵⤶⤷⤸⤹⤺⤻⤼⤽⤾⤿⥀⥁⥂⥃⥄⥅⥆⥇⥈⥉⥊⥋⥌⥍⥎⥏⥐⥑⥒⥓⥔⥕⥖⥗⥘⥙⥚⥛⥜⥝⥞⥟⥠⥡⥢⥣⥤⥥⥦⥧⥨⥩⥪⥫⥬⥭⥮⥯⥰⥱⥲⥳⥴⥵⥶⥷⥸⥹⥺⥻⥼⥽⥾⥿⦀⦁⦂⦙⦚⦛⦜⦝⦞⦟⦠⦡⦢⦣⦤⦥⦦⦧⦨⦩⦪⦫⦬⦭⦮⦯⦰⦱⦲⦳⦴⦵⦶⦷⦸⦹⦺⦻⦼⦽⦾⦿⧀⧁⧂⧃⧄⧅⧆⧇⧈⧉⧊⧋⧌⧍⧎⧏⧐⧑⧒⧓⧔⧕⧖⧗⧜⧝⧞⧟⧠⧡⧢⧣⧤⧥⧦⧧⧨⧩⧪⧫⧬⧭⧮⧯⧰⧱⧲⧳⧴⧵⧶⧷⧸⧹⧺⧻⧾⧿⨀⨁⨂⨃⨄⨅⨆⨇⨈⨉⨊⨋⨌⨍⨎⨏⨐⨑⨒⨓⨔⨕⨖⨗⨘⨙⨚⨛⨜⨝⨞⨟⨠⨡⨢⨣⨤⨥⨦⨧⨨⨩⨪⨫⨬⨭⨮⨯⨰⨱⨲⨳⨴⨵⨶⨷⨸⨹⨺⨻⨼⨽⨾⨿⩀⩁⩂⩃⩄⩅⩆⩇⩈⩉⩊⩋⩌⩍⩎⩏⩐⩑⩒⩓⩔⩕⩖⩗⩘⩙⩚⩛⩜⩝⩞⩟⩠⩡⩢⩣⩤⩥⩦⩧⩨⩩⩪⩫⩬⩭⩮⩯⩰⩱⩲⩳⩴⩵⩶⩷⩸⩹⩺⩻⩼⩽⩾⩿⪀⪁⪂⪃⪄⪅⪆⪇⪈⪉⪊⪋⪌⪍⪎⪏⪐⪑⪒⪓⪔⪕⪖⪗⪘⪙⪚⪛⪜⪝⪞⪟⪠⪡⪢⪣⪤⪥⪦⪧⪨⪩⪪⪫⪬⪭⪮⪯⪰⪱⪲⪳⪴⪵⪶⪷⪸⪹⪺⪻⪼⪽⪾⪿⫀⫁⫂⫃⫄⫅⫆⫇⫈⫉⫊⫋⫌⫍⫎⫏⫐⫑⫒⫓⫔⫕⫖⫗⫘⫙⫚⫛⫝̸⫝⫞⫟⫠⫡⫢⫣⫤⫥⫦⫧⫨⫩⫪⫫⫬⫭⫮⫯⫰⫱⫲⫳⫴⫵⫶⫷⫸⫹⫺⫻⫼⫽⫾⫿⬰⬱⬲⬳⬴⬵⬶⬷⬸⬹⬺⬻⬼⬽⬾⬿⭀⭁⭂⭃⭄⭇⭈⭉⭊⭋⭌﬩﹢﹤﹥﹦＋＜＝＞｜～￢￩￪￫￬𝛁𝛛𝛻𝜕𝜵𝝏𝝯𝞉𝞩𝟃"; //https://www.classe.cornell.edu/~dms79/LectureNotes/formulae/list-of-math-symbols-extended.htm
-[...greek_ch].forEach(ch => keyboard.innerHTML += '<input type="button" value="'+ch+'" onclick="putchar(this.value)">')
+[...greek_ch].forEach(ch => keyboard.innerHTML += '<input type="button" value="'+ch+'" onclick="taInsert(this.value)">')
 keyboard.innerHTML += "<br>";
-[...Greek_ch].forEach(ch => keyboard.innerHTML += '<input type="button" value="'+ch+'" onclick="putchar(this.value)">')
+[...Greek_ch].forEach(ch => keyboard.innerHTML += '<input type="button" value="'+ch+'" onclick="taInsert(this.value)">')
 keyboard.innerHTML += "<br>";
-[...math_ch].forEach(ch => keyboard.innerHTML += '<input type="button" value="'+ch+'" onclick="putchar(this.value)">')
+[...math_ch].forEach(ch => keyboard.innerHTML += '<input type="button" value="'+ch+'" onclick="taInsert(this.value)">')
 
 </script>
 </body>
