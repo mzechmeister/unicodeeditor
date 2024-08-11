@@ -57,7 +57,7 @@ hr {
 <input type="checkbox" id="greek" onclick="this.checked && (cursive.checked = false); fmt_toggle(f.gr, this.checked); input.focus();"><label for="greek" title="greek">α</label>
 <input type="checkbox" id="auto_math" onclick="this.checked && (serif.checked = italic.checked = true, cursive.checked = false); input.focus();"><label for="auto_math" title="greedy auto rendered math mode">∮</label>
 <hr>
-<span>basic font </span> <select name="basicfont" id="basicfont" onchange='input.style.setProperty("font-family", this.value); keyboard.style.setProperty("font-family", this.value)'>
+<span>parent font </span> <select name="basicfont" id="basicfont" onchange='input.style.setProperty("font-family", this.value); keyboard.style.setProperty("font-family", this.value)'>
   <option value="none" selected></option>
   <option value="Times">Times</option>
   <option value="Arial">Arial</option>
@@ -107,8 +107,25 @@ map.grbfit = "𝞐𝞑𝞒𝞓𝞔𝞕𝞖𝞗𝞘𝞙𝞚𝞛𝞜𝞝𝞞𝞟�
 map.grbfit = "𝞐𝞑𝞝𝞓𝞔𝞥𝞒𝞖𝞘𝞗𝞙𝞚𝞛𝞜𝞞𝞟𝞠𝞡𝞢𝞣𝞤𝞩𝞦𝞨𝞧𝞕𝞪𝞫𝞷𝞭𝞮𝟇𝞬𝞰𝞱𝞲𝞳𝞴𝞵𝞶𝞸𝞹𝟅𝞺𝞼𝞽𝞾𝟃𝟂𝟀𝟁𝞯" // 𝞿𝞻𝟄𝟆𝟈𝟉
 map.mono   = "𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣𝟶𝟷𝟸𝟹𝟺𝟻𝟼𝟽𝟾𝟿" // 120432
 
-for (k of Object.keys(map))
-    map[k] = [...map[k]]   // strings to lists
+f = {}   // font flag bits
+f.Az = 0
+f.bf = 1
+f.it = 2
+f.ss = 4
+f.cu = 8
+f.mo = 16
+f.gr = 32
+f.ma = f.it
+
+name2flag = name => name.match(/../g).reduce((s,k) => s|f[k], 0)
+flagnames = {}
+
+for (key of Object.keys(map)) {
+    map[key] = [...map[key]]   // strings to lists
+    flagnames[key] = name2flag(key);
+    flagnames[flagnames[key]] = key
+    map[flagnames[key]] = map[key]   // allow to index with bitflag, too
+}
 
 function fmt(ch, map_to, map_from=map.Az) {
     if (map_to && map_from) {
@@ -121,6 +138,12 @@ function fmt(ch, map_to, map_from=map.Az) {
 function fmts(s, ...args) {
     return [...s].map(ch => fmt(ch, ...args)).join("")
 }
+
+function get_font(ch) {
+    for ([key, vals] of Object.entries(map))
+        if (vals.includes(ch)) return key
+}
+
 
 math_keynames = {'Alpha': 'Α','Beta': 'Β','Gamma': 'Γ','Delta': 'Δ','Epsilon': 'Ε','Zeta': 'Ζ','Eta': 'Η','Theta': 'Θ','Iota': 'Ι','Kappa': 'Κ','Lambda': 'Λ','upMu': 'Μ','upNu': 'Ν','Xi': 'Ξ','upOmicron': 'Ο','Pi': 'Π','Rho': 'Ρ','Sigma': 'Σ','Tau': 'Τ','Upsilon': 'Υ','Phi': 'Φ','Chi': 'Χ','Psi': 'Ψ','Omega': 'Ω','alpha': 'α','beta': 'β','gamma': 'γ','delta': 'δ','upepsilon': 'ε','zeta': 'ζ','eta': 'η','theta': 'θ','iota': 'ι','kappa': 'κ','lambda': 'λ','mu': 'μ','nu': 'ν','xi': 'ξ','upomicron': 'ο','pi': 'π','rho': 'ρ','varsigma': 'ς','sigma': 'σ','tau': 'τ','upsilon': 'υ','varphi': 'φ','chi': 'χ','psi': 'ψ','omega': 'ω','upvarbeta': 'ϐ','vartheta': 'ϑ','phi': 'ϕ','varpi': 'ϖ', "int": "∫", "sum": "Σ", "*": "⋅",}
 
@@ -169,30 +192,6 @@ function fmt_unicode(text) {
     if (!key) return false
     taInsert(fmt(text, map[key]))
     return true
-}
-
-f = {}   // font flag bits
-f.Az = 0
-f.bf = 1
-f.it = 2
-f.ss = 4
-f.cu = 8
-f.mo = 16
-f.gr = 32
-f.ma = f.it
-
-function get_font(ch) {
-    for ([key, vals] of Object.entries(map))
-        if (vals.includes(ch)) return key
-}
-
-name2flag = name => name.match(/../g).reduce((s,k) => s|f[k], 0)
-Object.keys(map).map(name2flag)
-flagnames = {}
-for (key of Object.keys(map)) {
-    flagnames[key] = name2flag(key);
-    flagnames[flagnames[key]] = key
-    map[flagnames[key]] = map[key]
 }
 
 function fmt_toggle(font_map, add=true) {
