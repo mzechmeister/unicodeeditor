@@ -49,12 +49,12 @@ hr {
 
 <body>
 <div id="menubar">
-<input type="checkbox" id="bold" onclick="this.checked && fmt_selection(map.bf); input.focus();"><label for="bold" title="bold (mathbf)">𝗕</label>
-<input type="checkbox" id="italic" onclick="this.checked && (cursive.checked = false, fmt_selection(map.it)); input.focus();"><label for="italic" title="italic (mathit)" style="font-family: Arial;">𝘐</label>
-<input type="checkbox" id="serif" onclick="input.focus();"><label for="serif" title="serif" style="font-family: Times">S</label>
-<input type="checkbox" id="cursive" onclick="this.checked && (italic.checked = false, fmt_selection(map.cu)); input.focus();"><label for="cursive" title="cursive (mathcal)">𝒞</label>
-<input type="checkbox" id="mono" onclick="this.checked && (cursive.checked = false, fmt_selection(map.it)); input.focus();"><label for="mono" title="monospace (mathtt)" style="font-family: Times">𝚃</label>
-<input type="checkbox" id="greek" onclick="this.checked && fmt_selection(map.gr); input.focus();"><label for="greek" title="greek">α</label>
+<input type="checkbox" id="bold" onclick="fmt_toggle(f.bf, this.checked); input.focus();"><label for="bold" title="bold (mathbf)">𝗕</label>
+<input type="checkbox" id="italic" onclick="this.checked && (cursive.checked = false); fmt_toggle(f.it, this.checked); input.focus();"><label for="italic" title="italic (mathit)" style="font-family: Arial;">𝘐</label>
+<input type="checkbox" id="serif" onclick="input.focus(); fmt_toggle(f.ss, !this.checked)"><label for="serif" title="serif" style="font-family: Times">S</label>
+<input type="checkbox" id="cursive" onclick="this.checked && (italic.checked = false); fmt_toggle(f.cu, this.checked); input.focus();"><label for="cursive" title="cursive (mathcal)">𝒞</label>
+<input type="checkbox" id="mono" onclick="this.checked && (cursive.checked = false); fmt_toggle(f.mo, this.checked); input.focus();"><label for="mono" title="monospace (mathtt)" style="font-family: Times">𝚃</label>
+<input type="checkbox" id="greek" onclick="this.checked && (cursive.checked = false); fmt_toggle(f.gr, this.checked); input.focus();"><label for="greek" title="greek">α</label>
 <input type="checkbox" id="auto_math" onclick="this.checked && (serif.checked = italic.checked = true, cursive.checked = false); input.focus();"><label for="auto_math" title="greedy auto rendered math mode">∮</label>
 <hr>
 <span>basic font </span> <select name="basicfont" id="basicfont" onchange='input.style.setProperty("font-family", this.value); keyboard.style.setProperty("font-family", this.value)'>
@@ -111,8 +111,10 @@ for (k of Object.keys(map))
     map[k] = [...map[k]]   // strings to lists
 
 function fmt(ch, map_to, map_from=map.Az) {
-    n = map_from.indexOf(ch)
-    if (n > -1 && n < map_to.length) ch = map_to[n]   // digits may be not in map
+    if (map_to && map_from) {
+        n = map_from.indexOf(ch)
+        if (n > -1 && n < map_to.length) ch = map_to[n]   // digits may be not in map
+    }
     return ch
 }
 
@@ -169,9 +171,42 @@ function fmt_unicode(text) {
     return true
 }
 
-function fmt_selection(font_pos) {
-   sel = input.value.substring(input.selectionStart, input.selectionEnd)
-   if (sel) taInsert([...sel].map(ch => fmt(ch, font_pos)).join(""))
+f = {}   // font flag bits
+f.Az = 0
+f.bf = 1
+f.it = 2
+f.ss = 4
+f.cu = 8
+f.mo = 16
+f.gr = 32
+f.ma = f.it
+
+function get_font(ch) {
+    for ([key, vals] of Object.entries(map))
+        if (vals.includes(ch)) return key
+}
+
+name2flag = name => name.match(/../g).reduce((s,k) => s|f[k], 0)
+Object.keys(map).map(name2flag)
+flagnames = {}
+for (key of Object.keys(map)) {
+    flagnames[key] = name2flag(key);
+    flagnames[flagnames[key]] = key
+    map[flagnames[key]] = map[key]
+}
+
+function fmt_toggle(font_map, add=true) {
+    sel = input.value.substring(input.selectionStart, input.selectionEnd)
+    if (sel) {
+        selnew = ""
+        for (ch of [...sel]) {
+            fontkey = +get_font(ch)
+            key = add ? (fontkey | font_map) : (fontkey & ~font_map)
+            selnew += fmt(ch, map[key], map[fontkey])
+        }
+        taInsert(selnew)
+        input.setSelectionRange(input.selectionStart - selnew.length, input.selectionStart)
+    }
 }
 
 function taInsert(text, start, end=null) {
