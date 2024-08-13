@@ -49,6 +49,10 @@ hr {
   margin-left: 0px;
   border: 0;
 }
+
+select :first-child  {
+  color: gray;
+}
 </style>
 
 <body>
@@ -62,8 +66,8 @@ hr {
 <input type="checkbox" id="auto_math" onclick="this.checked && (serif.checked = italic.checked = true, cursive.checked = false); input.focus();"><label for="auto_math" title="greedy auto rendered math mode">∮</label>
 <hr>
 <input type="button" id="share" onclick="document.location.href = 'index.html?'+input.value"><label for="share" title="share link">&#x1F517;&#xfe0e;</label>
-<span>parent font </span> <select name="basicfont" id="basicfont" onchange='input.style.setProperty("font-family", this.value); keyboard.style.setProperty("font-family", this.value)'>
-  <option value="none" selected></option>
+<select name="basicfont" id="basicfont" onchange='input.style.setProperty("font-family", this.value); keyboard.style.setProperty("font-family", this.value)'>
+  <option value="" selected>parent font...</option>
   <option value="Times">Times</option>
   <option value="Arial">Arial</option>
   <option value="Arial, sans-serif">Arial, sans-serif</option>
