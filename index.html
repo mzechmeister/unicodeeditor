@@ -179,8 +179,8 @@ sup_keys = "0123456789+-=()abcdefghijklmnoprstuvwxyzABDEGHIJKLMNOPRTUVW"
 sup_vals = "⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖʳˢᵗᵘᵛʷˣʸᶻᴬᴮᴰᴱᴳᴴᴵᴶᴷᴸᴹᴺᴼᴾᴿᵀᵁⱽᵂ"
 sub_keys = "0123456789+-=()aehijklmnoprstuvx"
 sub_vals = "₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎ₐₑₕᵢⱼₖₗₘₙₒₚᵣₛₜᵤᵥₓ";
-[...sup_keys].forEach((key, i) => math_keynames["^"+key] = sup_vals[i]);
-[...sub_keys].forEach((key, i) => math_keynames["_"+key] = sub_vals[i]);
+[...sup_keys].forEach((key, i) => math_keynames["^"+fmt(key, map.it)] = sup_vals[i]);
+[...sub_keys].forEach((key, i) => math_keynames["_"+fmt(key, map.it)] = sub_vals[i]);
 
 function fmt_unicode(text) {
 
