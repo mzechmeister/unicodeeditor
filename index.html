@@ -12,7 +12,7 @@ textarea {
   width: calc(100% - 8px);
 }
 
-[type=checkbox] {
+[type=checkbox], #share {
   display: none
 }
 
@@ -61,6 +61,7 @@ hr {
 <input type="checkbox" id="greek" onclick="this.checked && (cursive.checked = false); fmt_toggle(f.gr, this.checked); input.focus();"><label for="greek" title="greek">α</label>
 <input type="checkbox" id="auto_math" onclick="this.checked && (serif.checked = italic.checked = true, cursive.checked = false); input.focus();"><label for="auto_math" title="greedy auto rendered math mode">∮</label>
 <hr>
+<input type="button" id="share" onclick="document.location.href = 'index.html?'+input.value"><label for="share" title="share link">&#x1F517;&#xfe0e;</label>
 <span>parent font </span> <select name="basicfont" id="basicfont" onchange='input.style.setProperty("font-family", this.value); keyboard.style.setProperty("font-family", this.value)'>
   <option value="none" selected></option>
   <option value="Times">Times</option>
@@ -82,6 +83,8 @@ see also
 <a href="https://github.com/mzechmeister/unicodeeditor">https://github.com/mzechmeister/unicodeeditor</a><br>
 
 <script>
+
+input.value = decodeURI((new URL(window.location)).search.slice(1))
 
 map = {}
 map.Az = "ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz"
