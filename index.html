@@ -84,8 +84,8 @@ select :first-child  {
 <!-- <textarea id="output">ͰͱͲͳʹͶͷͺͻͼͽͿΆΈΉΊΌΎΏΐΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΪΫάέήίΰαβγδεζηθικλμνξοπρςστυφχψωϊϋόύώϏϐϑϒϓϔϕϖϗϘϙϚϛϜϝϞϟϠϡϰϱϲϳϴϵϷϸϹϺϻϼϽϾϿ</textarea> -->
 <div style="display: flex; gap: 3px;">
 <input type="number" id="codePoint" placeholder="code point" oninput="hexcode.value = '0x'+(+this.value).toString(16)" onchange="abc.value = [...Array(100)].map((x,i) => String.fromCodePoint(+i+(+this.value))).join('')" step="50"  style="width: 10ch; text-align: right;">
-<input id="hexcode" placeholder="hex" oninput="codePoint.value = +this.value" onchange="abc.value = [...Array(100)].map((x,i) => String.fromCodePoint(+i+(+this.value))).join('')" pattern="(U+|0x)?[0-9A-Fa-f]{1,6}" title="hex number (U+|0x)?[0-9A-Fa-f]{1,6}" style="width: 8ch; text-align: right;">
-<input id="abc" onchange="codePoint.value = this.value.codePointAt(0)" style="flex: 1;">
+<input id="hexcode" placeholder="hex" oninput="codePoint.value = +this.value.replace('U+', '0x')" onchange="abc.value = [...Array(100)].map((x,i) => String.fromCodePoint(+i+(+this.value))).join('')" pattern="(U\+|0x)?[0-9A-Fa-f]{1,6}" title="hex number (U\+|0x)?[0-9A-Fa-f]{1,6}" style="width: 8ch; text-align: right;">
+<input id="abc" onchange="hexcode.value = '0x'+(codePoint.value = this.value.codePointAt(0)).toString(16)" style="flex: 1;">
 </div>
 <div id="keyboard"></div>
 <br>
