@@ -8,3 +8,4 @@ Preview: http://raw.githack.com/mzechmeister/unicodeeditor/master/
 
 See also:
 * https://www.unicodeit.net (focus on Latex math)
+* https://github.com/DenverCoder1/unicode-formatter
